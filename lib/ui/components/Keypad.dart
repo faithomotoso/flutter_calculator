@@ -6,7 +6,7 @@ class Keypad extends StatefulWidget {
   final TextEditingController inputValueController;
 
   Keypad({@required this.inputValueController})
-      : assert(inputValueController != null, "Pass in text controller");
+      : assert(inputValueController != null, "Text controller can't be null");
 
   @override
   State<StatefulWidget> createState() {
@@ -124,8 +124,6 @@ class _KeypadState extends State<Keypad> {
   }
 
   Widget buildKeys() {
-    print("buildKeys called ${numberKeys[0].width}");
-
     // append row to rows list based on tilesPerRow
     List<Row> rows = [];
     int start = 0;

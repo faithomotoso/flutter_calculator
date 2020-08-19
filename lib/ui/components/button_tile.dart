@@ -29,22 +29,12 @@ class NumberKey extends StatefulWidget {
 }
 
 class _NumberKeyState extends State<NumberKey> {
-  double width;
-  double height;
-
-
-  @override
-  void initState() {
-    super.initState();
-    width = widget.width;
-    height = widget.height;
-  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // do somn
+        // check if value is in string
         if (widget.preventDuplicates) {
           if (!(widget.inputValue.text.contains(widget.tileString))) {
             widget.inputValue.text += this.widget.tileString;
@@ -55,8 +45,8 @@ class _NumberKeyState extends State<NumberKey> {
       },
       child: Container(
         decoration: BoxDecoration(),
-        height: height,
-        width: width,
+        height: widget.height,
+        width: widget.width,
         child: Center(
           child: Text(
             widget.tileString,
