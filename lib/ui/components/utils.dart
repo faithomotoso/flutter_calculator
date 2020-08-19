@@ -7,3 +7,5 @@ String formatNumber({@required String num}) {
 }
 
 TextStyle tileTextStyle = TextStyle(fontSize: 22);
+
+String dividerUnicode = "\u00f7";

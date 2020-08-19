@@ -32,22 +32,6 @@ class _OperatorButtonState extends State<OperatorButton> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-//        print("Prevent duplicates: ${widget.operatorString} = ${widget.preventDuplicates}");
-
-//        if (widget.preventDuplicates) {
-//          print("existing string: ${widget.inputValueController.text}");
-//          // check if operator is in string
-//          if (!(widget.inputValueController.text
-//              .contains(widget.operatorString))) {
-//            widget.inputValueController?.text += widget.operatorString;
-//            widget.onTap?.call();
-//          }
-//        } else {
-//          widget.inputValueController?.text += widget.operatorString;
-//          widget.onTap?.call();
-//        }
-
-
         // prevent operators from following each other
         // e.g 2+-, 4*-1
 

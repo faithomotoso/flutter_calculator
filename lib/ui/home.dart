@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calculator/eq/Equation.dart';
 import 'package:flutter_calculator/ui/components/Keypad.dart';
 import 'package:flutter_calculator/ui/components/Operator_Keypad.dart';
 import 'package:flutter_calculator/ui/components/button_tile.dart';
@@ -32,7 +33,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   ValueNotifier<double> scale = ValueNotifier<double>(1.0);
 
   AnimationController animationController;
-  Animation animation;
+  Animation fontSizeAnimation;
 
   @override
   void initState() {
@@ -42,13 +43,26 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: Duration(milliseconds: 300),
     );
-    animation = Tween(begin: 1.0, end: 0.5).animate(
-        CurvedAnimation(curve: Curves.linear, parent: animationController));
+    fontSizeAnimation = Tween(begin: 90.0, end: 65.0).animate(
+        CurvedAnimation(curve: Curves.easeIn, parent: animationController));
 
     inputValueController.addListener(() {
-      if (inputValueController.text.length > 10) {
+      // change the size of inputValue when length is > 8
+      if (inputValueController.text.length > 8 &&
+          animationController.status == AnimationStatus.dismissed) {
         animationController.forward();
+      } else if (inputValueController.text.length <= 8 &&
+          animationController.status == AnimationStatus.completed) {
+        // reverse animation if length is <= 8
+        animationController.reverse();
       }
+
+      // trigger Equation.solve when a change occurs
+      // assign result to answer controller
+//      print("res: ${Equation.solve(inputController: inputValueController)}");
+      double result = Equation.solve(inputController: inputValueController);
+      answerController.text = result.toString();
+      print("Answer: ${answerController.text}");
     });
   }
 
@@ -70,6 +84,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
             ),
             Expanded(
+              flex: 2,
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return Row(
@@ -83,6 +98,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           flex: 1,
                           child: OperatorKeypad(
                             inputValueController: inputValueController,
+                            onEqualsTapped: () {
+                              print("Equals tapped");
+                              answerController.text = "some answer here";
+                            },
                           ))
                     ],
                   );
@@ -96,39 +115,34 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   Widget eqWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        ValueListenableBuilder(
-          valueListenable: inputValueController,
-          builder: (context, inputValue, child) {
-            return TextField(
+    return AnimatedBuilder(
+      animation: animationController,
+      builder: (context, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            TextField(
               controller: inputValueController,
               textDirection: TextDirection.rtl,
               readOnly: true,
               showCursor: true,
 //              cursorColor: Colors.white.withOpacity(0.1),
-              style: TextStyle(
-//                fontSize: Theme.of(context).textTheme.headline1.fontSize,
-                fontSize: inputValueController.text.length < 10 ? 20 : 30,
-              ),
+              style: TextStyle(fontSize: fontSizeAnimation.value),
               decoration: InputDecoration.collapsed(hintText: null),
-            );
-
-//            return TextField(
-//              controller: inputValueController,
-//              textDirection: TextDirection.rtl,
-//              readOnly: true,
-//              showCursor: true,
-////              cursorColor: Colors.white.withOpacity(0.1),
-//              style: TextStyle(
-//                fontSize: Theme.of(context).textTheme.headline1.fontSize,
-//              ),
-//              decoration: InputDecoration.collapsed(hintText: null),
-//            );
-          },
-        )
-      ],
+            ),
+            TextField(
+              controller: answerController,
+              textDirection: TextDirection.rtl,
+              readOnly: true,
+              showCursor: false,
+//              cursorColor: Colors.white.withOpacity(0.1),
+              style: TextStyle(
+                  fontSize: Theme.of(context).textTheme.headline1.fontSize),
+              decoration: InputDecoration.collapsed(hintText: null),
+            )
+          ],
+        );
+      },
     );
   }
 }

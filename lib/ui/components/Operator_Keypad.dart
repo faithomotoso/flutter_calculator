@@ -4,8 +4,9 @@ import 'operator_button.dart';
 
 class OperatorKeypad extends StatefulWidget {
   final TextEditingController inputValueController;
+  final Function onEqualsTapped;
 
-  OperatorKeypad({@required this.inputValueController})
+  OperatorKeypad({@required this.inputValueController, this.onEqualsTapped})
       : assert(inputValueController != null, "Text controller can't be null");
 
   @override
@@ -35,8 +36,6 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
     initOperatorButtons();
 
     inputValueController.addListener(() {
-      print(inputValueController.text);
-
       if (inputValueController.text.length == 0) {
         // reset
         setPreventDuplicates(prevent: false);
@@ -111,7 +110,9 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
       backspaceButton(),
       OperatorButton(
         operatorString: "=",
-        onTap: () {},
+        onTap: () {
+          widget.onEqualsTapped?.call();
+        },
         preventDuplicates: false,
       )
     ];
@@ -151,7 +152,7 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
     );
 
     Column rightColumn = Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: rightOperatorButtons.cast<Widget>(),
     );
 
