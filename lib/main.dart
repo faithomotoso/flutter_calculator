@@ -5,6 +5,9 @@ void main() {
   runApp(MyApp());
 }
 
+// global variable for changing app theme
+ValueNotifier<Brightness> appTheme = ValueNotifier<Brightness>(Brightness.light);
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -14,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lime,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        brightness: Brightness.light
+        brightness: appTheme.value
       ),
       home: Home(),
     );

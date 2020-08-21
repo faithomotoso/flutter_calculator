@@ -25,6 +25,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Tween sizeTween;
   CurvedAnimation sizeCurveAnimation;
 
+  ValueNotifier<bool> swapIcon; // variable for swapping backspace icon
+
   @override
   void initState() {
     super.initState();
@@ -92,6 +94,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: appBar(),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -122,6 +125,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           child: OperatorKeypad(
                             inputValueController: inputValueController,
                             onEqualsTapped: onEqualsTapped,
+                            onEqualsCreated: (showCLR){
+                              swapIcon = showCLR;
+                            },
+
                           ))
                     ],
                   );
@@ -144,6 +151,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       // isNotEmpty prevents it from clearing when equation is incomplete
 
       inputValueController.text = answerController.text;
+      swapIcon.value = true;
       fontSizeAnimationController.reverse();
 //    changeInputFontSize(\);
 
@@ -185,6 +193,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
         );
       },
+    );
+  }
+
+  AppBar appBar() {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.white,
+//      toolbarHeight: 1,
+      actions: [
+        PopupMenuButton(
+          itemBuilder: (context) {
+            return List.from([
+              PopupMenuItem(
+                child: Text("huh"),
+              )
+            ]);
+          },
+        )
+      ],
     );
   }
 }

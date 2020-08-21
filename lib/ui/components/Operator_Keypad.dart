@@ -5,8 +5,14 @@ import 'operator_button.dart';
 class OperatorKeypad extends StatefulWidget {
   final TextEditingController inputValueController;
   final Function onEqualsTapped;
+  // using this to pass ValueNotfier for swapping
+  // backspace icon for 'CLR'
+  Function onEqualsCreated;
 
-  OperatorKeypad({@required this.inputValueController, this.onEqualsTapped})
+  OperatorKeypad(
+      {@required this.inputValueController,
+      this.onEqualsTapped,
+      this.onEqualsCreated})
       : assert(inputValueController != null, "Text controller can't be null");
 
   @override
@@ -28,6 +34,7 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
 
   double keyWidth;
   double keyHeight;
+
 
   @override
   void initState() {
@@ -114,6 +121,9 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
         preventDuplicates: false,
       )
     ];
+
+    // pass value notifier to swap icons
+    widget.onEqualsCreated?.call(showCLR);
   }
 
   void setPreventDuplicates({bool prevent}) {
