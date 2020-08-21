@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calculator/eq/Equation.dart';
+import 'package:flutter_calculator/main.dart';
 import 'package:flutter_calculator/ui/components/Keypad.dart';
 import 'package:flutter_calculator/ui/components/Operator_Keypad.dart';
 
@@ -25,7 +26,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Tween sizeTween;
   CurvedAnimation sizeCurveAnimation;
 
-  ValueNotifier<bool> swapIcon; // variable for swapping backspace icon
+  ValueNotifier<bool> swapBackspaceIcon; // variable for swapping backspace icon
+
 
   @override
   void initState() {
@@ -126,7 +128,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             inputValueController: inputValueController,
                             onEqualsTapped: onEqualsTapped,
                             onEqualsCreated: (showCLR){
-                              swapIcon = showCLR;
+                              swapBackspaceIcon = showCLR;
                             },
 
                           ))
@@ -151,7 +153,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       // isNotEmpty prevents it from clearing when equation is incomplete
 
       inputValueController.text = answerController.text;
-      swapIcon.value = true;
+      swapBackspaceIcon.value = true;
       fontSizeAnimationController.reverse();
 //    changeInputFontSize(\);
 
@@ -199,14 +201,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   AppBar appBar() {
     return AppBar(
       elevation: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
 //      toolbarHeight: 1,
       actions: [
         PopupMenuButton(
           itemBuilder: (context) {
             return List.from([
               PopupMenuItem(
-                child: Text("huh"),
+                child: ValueListenableBuilder(
+                  valueListenable: appTheme,
+                  builder: (context, theme, child) {
+                    return CheckboxListTile(
+                      value: theme == Brightness.light ? false : true,
+                      onChanged: (bool d) {
+                        appTheme.value = d ? Brightness.dark : Brightness.light;
+                      },
+                      title: Text("Dark Theme?"),
+                    );
+                  },
+                ),
               )
             ]);
           },
@@ -215,3 +228,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 }
+
+/*
+todo swap backspace icon back to normal when a number or operator is pressed
+replace next input when result is shown, caused by tapping =
+ */

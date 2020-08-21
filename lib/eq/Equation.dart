@@ -57,7 +57,7 @@ class Equation {
 
   static num solve({@required TextEditingController inputController}) {
     parseEquation(inputController: inputController);
-    num result = expression?.evaluate(EvaluationType.VECTOR, contextModel);
+    num result = expression?.evaluate(EvaluationType.REAL, contextModel);
 //    print("result: $result, expression: $expression");
     if (result != null) result = formatResult(result: result);
     return result;

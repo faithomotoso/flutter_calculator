@@ -12,14 +12,29 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Calculator',
-      theme: ThemeData(
-        primarySwatch: Colors.lime,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        brightness: appTheme.value
-      ),
-      home: Home(),
+    return ValueListenableBuilder(
+      valueListenable: appTheme,
+      builder: (context, appTheme, child) {
+        return MaterialApp(
+          title: 'Flutter Calculator',
+          theme: ThemeData(
+              primarySwatch: Colors.lime,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              brightness: appTheme
+          ),
+          home: Home(),
+        );
+      },
     );
+
+//    return MaterialApp(
+//      title: 'Flutter Calculator',
+//      theme: ThemeData(
+//        primarySwatch: Colors.lime,
+//        visualDensity: VisualDensity.adaptivePlatformDensity,
+//        brightness: appTheme.value
+//      ),
+//      home: Home(),
+//    );
   }
 }
