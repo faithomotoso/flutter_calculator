@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'button_tile.dart';
+import 'package:flutter_calculator/ui/components/utils.dart';
+import 'number_key.dart';
 
 class Keypad extends StatefulWidget {
   final TextEditingController inputValueController;
@@ -18,13 +18,19 @@ class _KeypadState extends State<Keypad> {
   TextEditingController inputValueController;
   List<NumberKey> numberKeys;
   int tilesPerRow = 3;
-  BoxConstraints boxConstraints; // boxConstraints used to assign dimensions to tiles
+  BoxConstraints
+      boxConstraints; // boxConstraints used to assign dimensions to tiles
+  int dotIndex; // index of '.' key
 
   @override
   void initState() {
     super.initState();
     inputValueController = widget.inputValueController;
     initNumberKeys();
+
+    widget.inputValueController.addListener(() {
+      preventDuplicateDots();
+    });
   }
 
   void initNumberKeys() {
@@ -68,13 +74,17 @@ class _KeypadState extends State<Keypad> {
       NumberKey(
         tileString: ".",
         inputValue: inputValueController,
-        preventDuplicates: true, // todo change implementation, to be based on equation entries
+        preventDuplicates:
+            true,
       ),
       NumberKey(
         tileString: "0",
         inputValue: inputValueController,
       ),
     ];
+
+    // store dot index
+    dotIndex = numberKeys.indexWhere((k) => k.tileString == '.');
   }
 
   @override
@@ -84,26 +94,21 @@ class _KeypadState extends State<Keypad> {
         boxConstraints = constraints;
 //        assignDimensionsToKeys(constraints: constraints);
 
-//        return Container(
-//            height: constraints.maxHeight,
-//            width: constraints.maxWidth,
-//            child: buildKeys());
-
         // using FutureBuilder for size change in foldables
-        // app was tested on android emulator foldable api
+        // app was tested on android emulator foldable device
 
-      return FutureBuilder(
-        future: assignDimensionsToKeys(constraints: constraints),
-        builder: (context, snapshot) {
+        return FutureBuilder(
+          future: assignDimensionsToKeys(constraints: constraints),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting)
+              return SizedBox();
 
-          if (snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-
-          return Container(
-              height: constraints.maxHeight,
-              width: constraints.maxWidth,
-              child: buildKeys());
-        },
-      );
+            return Container(
+                height: constraints.maxHeight,
+                width: constraints.maxWidth,
+                child: buildKeys());
+          },
+        );
       },
     );
   }
@@ -112,8 +117,8 @@ class _KeypadState extends State<Keypad> {
     // assign width and height to all number keys in the list
     double keyWidth = constraints.maxWidth / tilesPerRow;
 
-    int rows =
-        (numberKeys.length / tilesPerRow).round(); // find the number of rows being used
+    int rows = (numberKeys.length / tilesPerRow)
+        .round(); // find the number of rows being used
 
     double keyHeight = constraints.maxHeight / rows;
     numberKeys.forEach((key) {
@@ -130,7 +135,6 @@ class _KeypadState extends State<Keypad> {
     int end = 3;
 
     while (true) {
-
       if (end > numberKeys.length) {
         end = numberKeys.length;
       }
@@ -152,5 +156,31 @@ class _KeypadState extends State<Keypad> {
     return Column(
       children: rows,
     );
+  }
+
+  void preventDuplicateDots() {
+    // prevent duplicate '.'
+    // e.g. 4.5.1
+
+    // get the last index of an operator in the string
+    String lastIndexRegex =
+        r"([+]|[-]|x|[divider])".replaceAll(RegExp('divider'), dividerUnicode);
+
+    int index = widget.inputValueController.text.lastIndexOf(RegExp(lastIndexRegex));
+
+    // split string from last index to the end
+    // if last index character isn't an operator
+    if (index < widget.inputValueController.text.length) {
+      String lastNum = widget.inputValueController.text.substring(index + 1);
+
+      // if '.' is not in lastNum
+      // set preventDuplicates variable of '. key to false
+      // to allow '.' to be inputted
+      if (!(lastNum.contains(RegExp(r"[.]")))) {
+        numberKeys[dotIndex].preventDuplicates = false;
+      } else {
+        numberKeys[dotIndex].preventDuplicates = true;
+      }
+    }
   }
 }

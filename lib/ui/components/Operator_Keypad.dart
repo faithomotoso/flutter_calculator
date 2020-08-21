@@ -24,7 +24,7 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
   // CLR is shown when the equal to (=) button is pressed
   ValueNotifier<bool> showCLR = ValueNotifier<bool>(false);
 
-  bool preventDuplicates = false; // todo change when triggered
+  bool preventDuplicates = false;
 
   double keyWidth;
   double keyHeight;
@@ -43,9 +43,10 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
 
       if (inputValueController.text.length == 1) {
         // dup?
-        bool isNum = false;
         String firstVal = inputValueController.text[0];
-        isNum = int.tryParse(firstVal) != null ? true : false;
+        bool isNum = int.tryParse(firstVal) != null ? true : false;
+        // for '.'
+        isNum = firstVal == "." ? true : isNum;
 
         // prevent an operator except '-' from being the first
         if (!isNum && firstVal != "-") {
@@ -59,10 +60,9 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
       if (inputValueController.text.length > 0) {
         // trigger preventDuplicates when a number follows an operator
         // check if last added value is a number
-        bool isNum = false;
         String lastVal =
             inputValueController.text[inputValueController.text.length - 1];
-        isNum = int.tryParse(lastVal) != null ? true : false;
+        bool isNum = int.tryParse(lastVal) != null ? true : false;
 
         // if isNum is true, set preventDuplicates to false
         // to allow operators again
@@ -79,9 +79,7 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
     leftOperatorButtons = [
       OperatorButton(
         operatorString: "\u00f7",
-        onTap: () {
-//          setPreventDuplicates();
-        },
+        onTap: () {},
         inputValueController: inputValueController,
         preventDuplicates: preventDuplicates,
       ),
@@ -122,7 +120,7 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
     preventDuplicates = prevent ?? !preventDuplicates;
     // set boolean for each operator
     leftOperatorButtons.forEach((key) {
-      key.preventDuplicates = preventDuplicates;
+      if (key.operatorString != '-') key.preventDuplicates = preventDuplicates;
     });
   }
 
@@ -179,43 +177,49 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
     rightOperatorButtons.first =
         backspaceButton(height: keyHeight, width: keyWidth);
     rightOperatorButtons.skip(1).forEach((key) {
-//      key = key as OperatorButton;
       key..width = keyWidth;
       key..height = keyHeight;
     });
   }
 
   Widget backspaceButton({double height, double width}) {
-    return InkWell(
-        // using inkWell directly to swap between
-        // text and icon
-        // todo swap when equals to button is tapped
-        onTap: () {
-          try {
-            widget.inputValueController.text = widget.inputValueController.text
-                .substring(0, widget.inputValueController.text.length - 1);
-          } catch (e) {
-            debugPrint("Out of range");
-          }
-        },
-        onLongPress: () {
-          widget.inputValueController.clear();
-        },
-        child: Container(
-          height: height,
-          width: width,
-          child: Center(
-              child: ValueListenableBuilder(
-            valueListenable: showCLR,
-            builder: (context, showCLR, child) {
-              return showCLR
-                  ? Text(
-                      "CLR",
-                      style: tileTextStyle,
-                    )
-                  : Icon(Icons.backspace);
-            },
-          )),
-        ));
+    return ValueListenableBuilder(
+      valueListenable: showCLR,
+      builder: (context, showCLR, child) {
+        return InkWell(
+            // using inkWell directly to swap between
+            // text and icon
+            // todo swap when equals to button is tapped
+            onTap: !showCLR
+                ? () {
+                    try {
+                      widget.inputValueController.text =
+                          widget.inputValueController.text.substring(
+                              0, widget.inputValueController.text.length - 1);
+                    } catch (e) {
+                      debugPrint("Out of range");
+                    }
+                  }
+                : () {
+                    widget.inputValueController.clear();
+                  },
+            onLongPress: !showCLR
+                ? () {
+                    widget.inputValueController.clear();
+                  }
+                : null,
+            child: Container(
+              height: height,
+              width: width,
+              child: Center(
+                  child: showCLR
+                      ? Text(
+                          "CLR",
+                          style: tileTextStyle,
+                        )
+                      : Icon(Icons.backspace)),
+            ));
+      },
+    );
   }
 }
