@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calculator/ui/components/Operator_Keypad.dart';
 import 'package:flutter_calculator/ui/components/utils.dart';
 
 class OperatorButton extends StatefulWidget {
@@ -41,6 +42,11 @@ class _OperatorButtonState extends State<OperatorButton> {
         } else {
           // if false append operator to string and trigger onTap
           widget.inputValueController?.text += widget.operatorString;
+          if (showCLR.value) {
+            // assign to false when operators are tapped to prevent replacing the
+            // entire number when a number is tapped after an operator is tapped
+            showCLR.value = false;
+          }
           widget.onTap?.call();
         }
       },
