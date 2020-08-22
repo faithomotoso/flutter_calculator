@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calculator/ui/components/utils.dart';
 import 'operator_button.dart';
 
+// boolean determining if to show CLR text or backspace icon
+// CLR is shown when the equal to (=) button is pressed
+// using as a global variable
+ValueNotifier<bool> showCLR = ValueNotifier<bool>(false);
+
 class OperatorKeypad extends StatefulWidget {
   final TextEditingController inputValueController;
   final Function onEqualsTapped;
-  // using this to pass ValueNotfier for swapping
-  // backspace icon for 'CLR'
-  Function onEqualsCreated;
 
   OperatorKeypad(
       {@required this.inputValueController,
-      this.onEqualsTapped,
-      this.onEqualsCreated})
+      this.onEqualsTapped})
       : assert(inputValueController != null, "Text controller can't be null");
 
   @override
@@ -25,10 +26,6 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
   TextEditingController inputValueController;
   List<OperatorButton> leftOperatorButtons;
   List rightOperatorButtons;
-
-  // boolean determining if to show CLR text or backspace icon
-  // CLR is shown when the equal to (=) button is pressed
-  ValueNotifier<bool> showCLR = ValueNotifier<bool>(false);
 
   bool preventDuplicates = false;
 
@@ -121,9 +118,6 @@ class _OperatorKeypadState extends State<OperatorKeypad> {
         preventDuplicates: false,
       )
     ];
-
-    // pass value notifier to swap icons
-    widget.onEqualsCreated?.call(showCLR);
   }
 
   void setPreventDuplicates({bool prevent}) {

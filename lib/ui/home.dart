@@ -127,9 +127,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           child: OperatorKeypad(
                             inputValueController: inputValueController,
                             onEqualsTapped: onEqualsTapped,
-                            onEqualsCreated: (showCLR){
-                              swapBackspaceIcon = showCLR;
-                            },
 
                           ))
                     ],
@@ -153,7 +150,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       // isNotEmpty prevents it from clearing when equation is incomplete
 
       inputValueController.text = answerController.text;
-      swapBackspaceIcon.value = true;
+      showCLR.value = true;
       fontSizeAnimationController.reverse();
 //    changeInputFontSize(\);
 
@@ -228,8 +225,3 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 }
-
-/*
-todo swap backspace icon back to normal when a number or operator is pressed
-replace next input when result is shown, caused by tapping =
- */

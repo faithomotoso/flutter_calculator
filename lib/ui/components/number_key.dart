@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calculator/ui/components/Operator_Keypad.dart';
 import 'package:flutter_calculator/ui/components/utils.dart';
 
 class NumberKey extends StatefulWidget {
@@ -37,10 +38,10 @@ class _NumberKeyState extends State<NumberKey> {
         // check if value is in string
         if (widget.preventDuplicates) {
           if (!(widget.inputValue.text.contains(widget.tileString))) {
-            widget.inputValue.text += this.widget.tileString;
+            input();
           }
         } else {
-          widget.inputValue.text += this.widget.tileString;
+          input();
         }
       },
       child: Container(
@@ -55,6 +56,17 @@ class _NumberKeyState extends State<NumberKey> {
         ),
       ),
     );
+  }
+
+  void input() {
+    widget.inputValue.text += this.widget.tileString;
+    if (showCLR.value) {
+      // swap from CLR to backspace icon if showCLR is true
+      showCLR.value = false;
+      // replace the whole string with the number tapped
+      // only do this when equals to has been tapped and the answer is in display
+      widget.inputValue.text = this.widget.tileString;
+    }
   }
 
   @override

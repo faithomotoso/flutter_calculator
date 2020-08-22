@@ -26,15 +26,5 @@ class MyApp extends StatelessWidget {
         );
       },
     );
-
-//    return MaterialApp(
-//      title: 'Flutter Calculator',
-//      theme: ThemeData(
-//        primarySwatch: Colors.lime,
-//        visualDensity: VisualDensity.adaptivePlatformDensity,
-//        brightness: appTheme.value
-//      ),
-//      home: Home(),
-//    );
   }
 }
