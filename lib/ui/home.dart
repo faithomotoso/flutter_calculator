@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calculator/eq/Equation.dart';
 import 'package:flutter_calculator/main.dart';
+import 'package:flutter_calculator/storage/shared_prefs.dart';
 import 'package:flutter_calculator/ui/components/Keypad.dart';
 import 'package:flutter_calculator/ui/components/Operator_Keypad.dart';
 
@@ -32,6 +33,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    appTheme.addListener(() {
+      // save boolean in shared preferences when app theme changes
+      saveAppThemeToPreferences();
+    });
 
     fontSizeAnimationController = AnimationController(
       vsync: this,
@@ -223,5 +229,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         )
       ],
     );
+  }
+
+  void saveAppThemeToPreferences() {
+    // stores a boolean representing app theme
+    // true for dark theme
+    // false for light theme
+    bool themeBool = appTheme.value == Brightness.dark ? true : false;
+    AppSharedPreferences.preferences.setBool(AppSharedPreferences.themeKey, themeBool);
   }
 }
